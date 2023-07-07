@@ -1,38 +1,76 @@
 import React, { Component } from "react";
 import { nanoid } from 'nanoid'
 
+import Form from "./Form";
+import Filter from "./Filter";
+import ContactsList from "./ContactsList";
+
 export class App extends Component {
   state = {
-    contacts: [],
-    name: '',
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
+    filter: '',
   };
 
-  handelInputChange = event => {
-    this.setState({ name: event.currentTarget.value });
-  }
+  addNewContact = (name, number) => {
+    const { contacts } = this.state;
 
-  handelSubmit = e => {
-    e.preventDefault();
+    const existingContact = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
 
-    console.log(this.state);
-  }
+    if (existingContact) {
+      alert(`${name} is already in contacts.`);
+      return;
+    }
 
-  render() { 
+    const newContact = { id: nanoid(), name, number };
 
-  return (
-    <form onSubmit={this.handelSubmit}>
-      <input
-        type="text"
-        name="name"
-        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-        required
-        value={this.state.name}
-        onChange={this.handelInputChange}
-      />
-      <button type="submit">Add contact</button>
-    </form>
-  );
-  
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, newContact],
+    }));
+  };
+
+  changeFilter = e => {
+    this.setState({ filter: e.currentTarget.value });
+  };
+
+  getVisibleContacts = () => {
+    const { contacts, filter } = this.state;
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(name =>
+      name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
+  deleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
+  render() {
+    const { filter } = this.state;
+    const visibleContacts = this.getVisibleContacts;
+    return (
+      <>
+        <div>
+          <h1>Phonebook</h1>
+          <Form />
+          <h2>Contacts</h2>
+          <Filter value={filter} onChange={this.changeFilter} />
+          contacts={visibleContacts}
+          deleteContact={this.deleteContact}
+          <ContactsList />
+        </div>
+      </>
+    );
   }
 };
+
+export default App;
