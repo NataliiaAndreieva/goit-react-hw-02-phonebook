@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import Form from "./Form";
 import Filter from "./Filter";
 import ContactsList from "./ContactsList";
+import { Container } from "./App.styled";
 
 export class App extends Component {
   state = {
@@ -16,24 +17,22 @@ export class App extends Component {
     filter: '',
   };
 
-  addNewContact = (name, number) => {
+  addNewContact = data => {
     const { contacts } = this.state;
 
-    const existingContact = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (existingContact) {
-      alert(`${name} is already in contacts.`);
-      return;
-    }
-
-    const newContact = { id: nanoid(), name, number };
-
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-    }));
+    if (
+      contacts.some(
+        ({ name }) => name.toLocaleLowerCase() === data.name.toLocaleLowerCase()
+      )
+    )
+      return alert(`${data.name} is alredy in contacts`);
+    else
+      this.setState(prevState => ({
+        contacts: [...prevState.contacts, newContact],
+      }));
+    const newContact = { id: nanoid(), ...data };
   };
+  
 
   changeFilter = e => {
     this.setState({ filter: e.currentTarget.value });
@@ -43,7 +42,7 @@ export class App extends Component {
     const { contacts, filter } = this.state;
     const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(name =>
+    return contacts.filter(({name}) =>
       name.toLowerCase().includes(normalizedFilter)
     );
   };
@@ -56,18 +55,19 @@ export class App extends Component {
 
   render() {
     const { filter } = this.state;
-    const visibleContacts = this.getVisibleContacts;
+    const visibleContacts = this.getVisibleContacts();
     return (
       <>
-        <div>
+        <Container>
           <h1>Phonebook</h1>
-          <Form />
+          <Form addNewContact={this.addNewContact } />
           <h2>Contacts</h2>
           <Filter value={filter} onChange={this.changeFilter} />
-          contacts={visibleContacts}
-          deleteContact={this.deleteContact}
-          <ContactsList />
-        </div>
+          <ContactsList
+            contacts={visibleContacts}
+            deleteContact={this.deleteContact}
+          />
+        </Container>
       </>
     );
   }

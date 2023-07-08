@@ -7,12 +7,12 @@ class Form extends Component {
     number: '',
   };
 
-  handelInputChange = event => {
+  handleInputChange = event => {
     const { name, value } = event.currentTarget;
     this.setState({ [name]: value });
   };
 
-  handelSubmit = e => {
+  handleSubmit = e => {
     e.preventDefault();
     const { addNewContact } = this.props;
     addNewContact({...this.state});
@@ -26,7 +26,7 @@ class Form extends Component {
     
   render() {
     return (
-      <Container onSubmit={this.handelSubmit}>
+      <Container onSubmit={this.handleSubmit}>
         <label>
           Name
           <input
@@ -36,15 +36,15 @@ class Form extends Component {
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
             value={this.state.name}
-            onChange={this.handelInputChange}
+            onChange={this.handleInputChange}
           />
-          <button type="submit">Add contact</button>
+          {/* <button type="submit">Add contact</button> */}
         </label>
 
         <label>
           Number
           <input
-            onChange={this.handleImputChange}
+            onChange={this.handleInputChange}
             type="tel"
             name="number"
             value={this.state.number}
@@ -54,8 +54,10 @@ class Form extends Component {
             required
           />
         </label>
-        <Button disabled={!this.state.name || !this.state.number}>
-          Add new contact
+        <Button type="submit"
+          // disabled={!this.state.name || !this.state.number}
+        >
+          Add contact
         </Button>
       </Container>
     );
