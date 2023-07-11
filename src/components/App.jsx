@@ -19,21 +19,20 @@ export class App extends Component {
 
   addNewContact = data => {
     const { contacts } = this.state;
+    const contactExist = contacts.some(
+      ({ name }) => name.toLocaleLowerCase() === data.name.toLocaleLowerCase()
+    );
 
-    if (
-      contacts.some(
-        ({ name }) => name.toLocaleLowerCase() === data.name.toLocaleLowerCase()
-      )
-    )
-      return alert(`${data.name} is alredy in contacts`);
-    else
+    if (contactExist) return alert(`${data.name} is alredy in contacts`);
+
+    const newContact = { id: nanoid(), ...data };
+
       this.setState(prevState => ({
         contacts: [...prevState.contacts, newContact],
       }));
-    const newContact = { id: nanoid(), ...data };
+    
   };
   
-
   changeFilter = e => {
     this.setState({ filter: e.currentTarget.value });
   };
